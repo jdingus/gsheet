@@ -1,0 +1,8 @@
+*.pyc
+/env
+.txt
+*.json
+config.py
+/testing
+/hideme
+creds.py
