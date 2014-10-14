@@ -1,6 +1,6 @@
 *.pyc
 /env
-.txt
+*.txt
 *.json
 config.py
 /testing
