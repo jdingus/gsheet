@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import re
 import argparse
 import sheetsync
 import logging
@@ -78,6 +79,34 @@ def funct_add_entry(lbs):
 
 	# print them out
 	print_results(results)
+
+
+def is_message_weight_entry(message):
+	"""
+	Parse the body of text to see if it is a weight entry returns entry_bool,message
+	"""	
+	weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
+	weight_val = re.search(weight_exp,message)
+
+	if weight_val:
+	    # print weight_val.group(1),' : ',weight_val.group(2)
+	    return True,weight_val.group(2)
+
+	return False,0
+
+def twilio_date_from_message(twilio_message):
+
+	from email.utils import parsedate_tz
+	date_time = parsedate_tz(twilio_message.date_sent)
+	# print date_time
+	# month = date_time[1]
+	# day = date_time[2]
+	# year = date_time[0]
+	# print month,day,year
+	# raise SystemExit
+	# print type(date_time)
+	# day_entry = datetime.strftime(date_time,'%mm/%dd/%YY')
+	return str(date_time[1])+'/'+str(date_time[2])+'/'+str(date_time[0])
 
 def main():
 	username = USERNAME
