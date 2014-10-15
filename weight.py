@@ -83,35 +83,32 @@ def funct_add_entry(lbs):
 
 def is_message_weight_entry(message_obj):
 	"""
-	Parse the body of text to see if it is a weight entry returns entry_bool,message
+	Parse the body of text to see if it is a weight entry returns entry_bool,date_sent,weight entry
+	Will only check messages that occur the same day
 	"""	
 	message = message_obj.body
-	date_sent = str(message_obj.date_sent)
+	# Look at date from message and if not sent today ignore it
+	date_sent = twilio_date_from_message(message_obj.date_sent)
+	
+	print type(date_sent)
+
+	# if not date_sent.date() == datetime.today().date():
+	# 	return False,0,0		
 
 	weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
 	weight_val = re.search(weight_exp,message)
-	# print dir(message)
-	# raise SystemExit
+
 	if weight_val:
-	    # print weight_val.group(1),' : ',weight_val.group(2)
-	    date_sent = twilio_date_from_message(date_sent)
-	    return True,date_sent,weight_val.group(2)
+		weight_val = weight_val.group(2)
+		return True,date_sent,weight_val
 
 	return False,0,0
 
 def twilio_date_from_message(date):
-
 	from email.utils import parsedate_tz
+
 	date_time = parsedate_tz(date)
-	# print date_time
-	# month = date_time[1]
-	# day = date_time[2]
-	# year = date_time[0]
-	# print month,day,year
-	# raise SystemExit
-	# print type(date_time)
-	# day_entry = datetime.strftime(date_time,'%mm/%dd/%YY')
-	return str(date_time[1])+'/'+str(date_time[2])+'/'+str(date_time[0])
+	return date_time #str(date_time[1])+'/'+str(date_time[2])+'/'+str(date_time[0])
 
 def main():
 	username = USERNAME

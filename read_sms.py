@@ -12,33 +12,10 @@ def main():
     for item in messages:
         response = weight.is_message_weight_entry(item)
         if response[0]:
-            print response
+            print response[1],response[2]
 
 if __name__ == '__main__':
     main()
-
-
-
-"""
-    weight_val = re.search(weight_exp,body_text)
-    date_sent = item.date_sent
-
-    if weight_val:
-        print date_sent,' : ',weight_val.group(2)
-
-raise SystemExit
-
-# A list of message objects with the properties described above
-messages = client.messages.list()
-for item in messages:
-    body_text = item.body
-    weight_val = re.search(weight_exp,body_text)
-    date_sent = item.date_sent
-
-    if weight_val:
-        print date_sent,' : ',weight_val.group(2)
-""" 
-
 
 """
 >gweight<
@@ -51,12 +28,9 @@ Another function of the app is to send me daily/weekly updates, encouraging me a
 
 -1.) (100%) weight.funct_add_entry(date_entry,lbs) # Take weight entry and add to google sheet
 
--996.) if entry_bool==False  > Exit
-        
-        if entry_bool==True
-            (date_entry,lbs) = parse_weight_date(message)
+-996.) (0%) If entry for today, take last entry for the day and add the entry.
 
--997.) (entry_bool,date,message) = is_message_weight_entry(message) Parse the body of text to see if it is a weight entry returns entry_bool,message
+-997.) (100%) (entry_bool,date,message) = is_message_weight_entry(message) Parse the body of text to see if it is a weight entry returns entry_bool,date,message
 -998.) www.gweight.com/<USER>/weight-entry/<UNIQUE ID> Custom url is triggered upon receipt of a text message
 -999.) Text is sent to a twillio number 'w 234.5' "
 """
