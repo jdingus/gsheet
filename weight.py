@@ -81,23 +81,28 @@ def funct_add_entry(lbs):
 	print_results(results)
 
 
-def is_message_weight_entry(message):
+def is_message_weight_entry(message_obj):
 	"""
 	Parse the body of text to see if it is a weight entry returns entry_bool,message
 	"""	
+	message = message_obj.body
+	date_sent = str(message_obj.date_sent)
+
 	weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
 	weight_val = re.search(weight_exp,message)
-
+	# print dir(message)
+	# raise SystemExit
 	if weight_val:
 	    # print weight_val.group(1),' : ',weight_val.group(2)
-	    return True,weight_val.group(2)
+	    date_sent = twilio_date_from_message(date_sent)
+	    return True,date_sent,weight_val.group(2)
 
-	return False,0
+	return False,0,0
 
-def twilio_date_from_message(twilio_message):
+def twilio_date_from_message(date):
 
 	from email.utils import parsedate_tz
-	date_time = parsedate_tz(twilio_message.date_sent)
+	date_time = parsedate_tz(date)
 	# print date_time
 	# month = date_time[1]
 	# day = date_time[2]

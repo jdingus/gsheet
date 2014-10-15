@@ -1,28 +1,23 @@
 import re
 import weight
 from creds import TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN
-
 # Download the twilio-python library from http://twilio.com/docs/libraries
 from twilio.rest import TwilioRestClient
-from flask import jsonify
 
-client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+def main():
 
-# regex to find weight entry
-weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
+    client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-messages = client.messages.list()
-for item in messages:
-    body_text = item.body
-    # (entry_bool,date_entry,weight_val) = is_message_weight_entry(body_text)
-    print weight.is_message_weight_entry(body_text)
+    messages = client.messages.list()
+    for item in messages:
+        response = weight.is_message_weight_entry(item)
+        if response[0]:
+            print response
 
-    # print dir(item)
-    # raise SystemExit
-    print weight.twilio_date_from_message(item)
-    # print weight.twilio_date_from_message(item)
+if __name__ == '__main__':
+    main()
 
-raise SystemExit
+
 
 """
     weight_val = re.search(weight_exp,body_text)
