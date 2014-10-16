@@ -81,41 +81,40 @@ def funct_add_entry(lbs):
 	# print them out
 	print_results(results)
 
+def is_datetime_today(datetime_obj):
+	today=datetime.utcnow()
+	today=today.replace(tzinfo=pytz.utc)
+	# print today.date(),type(today.date())
+	# print datetime_obj.date(),type(today.date())
+	# raise SystemExit
+	# print (today-datetime_obj).days
+	if (today-datetime_obj).days == 0:
+		return True
+	else:
+		return False
 
 def is_message_weight_entry(message_obj):
 	"""
 	Parse the body of text to see if it is a weight entry returns entry_bool,date_sent,weight entry
-	Will only check messages that occur the same day
 	"""	
 	message = message_obj.body
-	# print message_obj.date_sent
-	# Look at date from message and if not sent today ignore it
 	date_sent = twilio_date_from_message(message_obj.date_sent)
-	date_sent = datetime(*(date_sent[0:6]))
-	date_sent = date_sent.replace(tzinfo=pytz.UTC)
-	# TODAY IN UTC
-	today=datetime.utcnow()
-	today=today.replace(tzinfo=pytz.utc)
+	
+	weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
+	weight_val = re.search(weight_exp,message)
 
-	weight_val=''
-
-	# Only validate entries that were recvd on current day
-	if date_sent.date() == today.today().date():
-			
-		weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
-		weight_val = re.search(weight_exp,message)
-
-		if weight_val:
-			weight_val = weight_val.group(2)
-			return True,date_sent.date(),weight_val
+	if weight_val:
+		weight_val = weight_val.group(2)
+		return True,date_sent,weight_val
 	else:
-		return False,date_sent,weight_val
+		return False,0,0
 
 def twilio_date_from_message(date):
 	from email.utils import parsedate_tz,parsedate
-
-	date_time = parsedate_tz(date)
-	return date_time #str(date_time[1])+'/'+str(date_time[2])+'/'+str(date_time[0])
+	date_sent = parsedate_tz(date)
+	date_sent = datetime(*(date_sent[0:6]))
+	date_sent = date_sent.replace(tzinfo=pytz.UTC)
+	return date_sent
 
 def main():
 	username = USERNAME
