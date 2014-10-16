@@ -89,23 +89,27 @@ def is_message_weight_entry(message_obj):
 	message = message_obj.body
 	# Look at date from message and if not sent today ignore it
 	date_sent = twilio_date_from_message(message_obj.date_sent)
-	
+	# Take tuple and strip out uneeded data to create datetime object
+	date_sent = datetime.tzinfo(date_sent)   #(*(date_sent[0:6]))
 	print type(date_sent)
+	raise SystemExit
+	weight_val=''
+	# print date_sent.date(),datetime.today().date()
+	# raise SystemExit
+	print date_sent.date(),datetime.today().date()
+	if date_sent.date() == datetime.today().date():
+			
+		weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
+		weight_val = re.search(weight_exp,message)
 
-	# if not date_sent.date() == datetime.today().date():
-	# 	return False,0,0		
-
-	weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
-	weight_val = re.search(weight_exp,message)
-
-	if weight_val:
-		weight_val = weight_val.group(2)
-		return True,date_sent,weight_val
-
-	return False,0,0
+		if weight_val:
+			weight_val = weight_val.group(2)
+			return True,date_sent.date(),weight_val
+	else:
+		return False,date_sent,weight_val
 
 def twilio_date_from_message(date):
-	from email.utils import parsedate_tz
+	from email.utils import parsedate_tz,parsedate
 
 	date_time = parsedate_tz(date)
 	return date_time #str(date_time[1])+'/'+str(date_time[2])+'/'+str(date_time[0])
