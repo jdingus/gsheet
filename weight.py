@@ -4,7 +4,8 @@ import argparse
 import sheetsync
 import logging
 from creds import USERNAME,PASSWORD,DOCUMENT_KEY
-from datetime import datetime
+from datetime import datetime,tzinfo
+import pytz
 __author__ = 'jdingus'
 
 
@@ -87,17 +88,19 @@ def is_message_weight_entry(message_obj):
 	Will only check messages that occur the same day
 	"""	
 	message = message_obj.body
+	# print message_obj.date_sent
 	# Look at date from message and if not sent today ignore it
 	date_sent = twilio_date_from_message(message_obj.date_sent)
-	# Take tuple and strip out uneeded data to create datetime object
-	date_sent = datetime.tzinfo(date_sent)   #(*(date_sent[0:6]))
-	print type(date_sent)
-	raise SystemExit
+	date_sent = datetime(*(date_sent[0:6]))
+	date_sent = date_sent.replace(tzinfo=pytz.UTC)
+	# TODAY IN UTC
+	today=datetime.utcnow()
+	today=today.replace(tzinfo=pytz.utc)
+
 	weight_val=''
-	# print date_sent.date(),datetime.today().date()
-	# raise SystemExit
-	print date_sent.date(),datetime.today().date()
-	if date_sent.date() == datetime.today().date():
+
+	# Only validate entries that were recvd on current day
+	if date_sent.date() == today.today().date():
 			
 		weight_exp = r"([Ww]) ([0-9]{3}[.]*[0-9]{0,1})"
 		weight_val = re.search(weight_exp,message)

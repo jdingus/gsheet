@@ -11,9 +11,9 @@ def main():
     messages = client.messages.list()
     for item in messages:
         response = weight.is_message_weight_entry(item)
-        print response
-        # if response[0]:
-        #     print response[1],response[2]
+        # print response
+        if response[0]:
+            print response[1],response[2]
 
 if __name__ == '__main__':
     main()
