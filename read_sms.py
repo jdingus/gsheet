@@ -18,7 +18,7 @@ def main():
         	if weight.is_datetime_today(response[1]):
 	        	entries_today.append(response)
     # On last entry for the day enter it into google sheet
-    last_lb_entry = entries_today[-1][-1]
+    last_lb_entry = entries_today[0][-1]
     weight.funct_add_entry(last_lb_entry)
 
 
