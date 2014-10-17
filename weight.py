@@ -6,23 +6,13 @@ import logging
 from creds import USERNAME,PASSWORD,DOCUMENT_KEY
 from datetime import datetime,tzinfo
 import pytz
+from dateutil import tz
+from email.utils import parsedate_tz,parsedate
 __author__ = 'jdingus'
 
 
 # logging.getLogger('').setLevel(logging.DEBUG)
 logging.basicConfig()
-
-'''
-# https://github.com/mbrenig/SheetSync
-
-# Get or create a spreadsheet...
-# target = sheetsync.Sheet(username="googledriveuser@domain.com",
-#                          password="app-specific-password",
-#                          document_name="Let's try out SheetSync")
-# # Insert or update rows on the spreadsheet...
-# target.inject(data)
-# print "Review the new spreadsheet created here: %s" % target.document_href
-'''
 
 def get_weight():
 	""" Return the weight and initialize the argparser
@@ -37,7 +27,9 @@ def get_weight():
 	return weight
 
 def all_results(source):
-
+	'''
+	Returns all results in a google sheet with valid weight entries
+	'''
 	d =  source.data()
 	entries = []
 
@@ -61,6 +53,10 @@ def all_results(source):
 
 
 def funct_add_entry(lbs):
+	'''
+	Enters a given lbs entry into a google sheet as defined by source on current date
+	Once entry is given will print out all lb entries currently in sheet
+	'''
 	username = USERNAME
 	password =  PASSWORD
 	document_key = DOCUMENT_KEY
@@ -70,25 +66,21 @@ def funct_add_entry(lbs):
 							sheet_name="Weight",\
 							key_column_headers=["Date"])	
 	
-	# lbs = get_weight()
-	
 	# take -w arg and current date and add to sheet
 	add_entry(source,lbs)
-
 	# get all weights in sheet
 	results = all_results(source)
-
 	# print them out
 	print_results(results)
 
 def is_datetime_today(datetime_obj):
-	today=datetime.utcnow()
-	today=today.replace(tzinfo=pytz.utc)
-	# print today.date(),type(today.date())
-	# print datetime_obj.date(),type(today.date())
-	# raise SystemExit
-	# print (today-datetime_obj).days
-	if (today-datetime_obj).days == 0:
+	'''
+	Checks a datetime to see if it shares the same date as now() if so returns True, else return False
+	'''
+	today=datetime.now()
+	to_zone=tz.tzlocal()
+	today=today.replace(tzinfo=to_zone)
+	if today.date() == datetime_obj.date():
 		return True
 	else:
 		return False
@@ -110,11 +102,22 @@ def is_message_weight_entry(message_obj):
 		return False,0,0
 
 def twilio_date_from_message(date):
-	from email.utils import parsedate_tz,parsedate
-	date_sent = parsedate_tz(date)
-	date_sent = datetime(*(date_sent[0:6]))
-	date_sent = date_sent.replace(tzinfo=pytz.UTC)
-	return date_sent
+	'''
+	Takes the date in twillio format and returns in a timezone aware local time
+	'''
+	date = parsedate_tz(date)
+	date = datetime(*(date[0:6]))
+	date = date.replace(tzinfo=pytz.UTC)
+	date = datetime_to_ltz(date)
+	return date
+
+def datetime_to_ltz(date_time):
+	''' 
+	Convert a datetime which already is tz aware and returns local time zone
+	'''
+	to_zone = tz.tzlocal()
+	local = date_time.astimezone(to_zone)
+	return local
 
 def main():
 	username = USERNAME
@@ -138,6 +141,9 @@ def main():
 	print_results(results)
 
 def print_results(results):
+	'''
+	Prints all of the results
+	'''
 	for item in results[:-1]:
 		print item
 	print 20*'-'
@@ -146,7 +152,6 @@ def add_entry(source,lbs):
 	""" Given a google sheet source and a dict data update the sheet 
 		If entry does not exist it will be updated otherwise will be created
 		"""
-
 	now = datetime.now()
 	date = now.strftime('%m-%d-%Y')
 	data = {date: {'Date': date, 'Weight': lbs}}

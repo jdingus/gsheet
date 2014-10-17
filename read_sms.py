@@ -7,15 +7,20 @@ from twilio.rest import TwilioRestClient
 def main():
 
     client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    entries_today=[]
 
     messages = client.messages.list()
     for item in messages:
         response = weight.is_message_weight_entry(item)
-        # print response
+        # If response is True
         if response[0]:
-        	# print response
+            # If entry is same date as now()
         	if weight.is_datetime_today(response[1]):
-	        	print response
+	        	entries_today.append(response)
+    # On last entry for the day enter it into google sheet
+    last_lb_entry = entries_today[-1][-1]
+    weight.funct_add_entry(last_lb_entry)
+
 
 if __name__ == '__main__':
     main()
