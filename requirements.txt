@@ -3,10 +3,13 @@ Jinja2==2.7.3
 MarkupSafe==0.23
 SheetSync==0.1.4
 Werkzeug==0.9.6
+argparse==1.2.1
+flask-script==2.0.5
 gdata==2.0.18
 httplib2==0.9
 itsdangerous==0.24
 python-dateutil==2.2
+pytz==2014.7
 six==1.8.0
 twilio==3.6.8
-Flask-Script==2.0.5
+wsgiref==0.1.2
