@@ -139,6 +139,7 @@ def main():
 
 	# print them out
 	print_results(results)
+	return results
 
 def print_results(results):
 	'''
