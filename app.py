@@ -1,11 +1,13 @@
 from flask import Flask, request
-import my_twilio
 app = Flask(__name__)
+
+import my_twilio
  
-@app.route('/text_entry', methods=['POST'])
+@app.route('/', methods=['GET'])
 def text_entry():
-   results = my_twilio.twilio_message()
-   return results
+	results = 'stuff'
+	# results = my_twilio.twilio_message()
+	return results
  
 if __name__ == "__main__":
     app.run(debug=True)
