@@ -1,12 +1,16 @@
 from flask import Flask, request
 app = Flask(__name__)
+# from site import myapp
+# from site import *
 
-import my_twilio
+
+
+from site import mytwilio
  
 @app.route('/', methods=['GET'])
 def text_entry():
 	results = 'stuff'
-	# results = my_twilio.twilio_message()
+	results = twilio_message()
 	return results
  
 if __name__ == "__main__":
